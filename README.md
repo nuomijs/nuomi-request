@@ -1,2 +1,2 @@
 # nuomi-request
-axios+jsonp封装的请求库
+axios+jsonp+mock封装的请求库
