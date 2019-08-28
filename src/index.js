@@ -6,11 +6,21 @@ function request() {
 
 };
 
-request.create = function() {
+const defaultOptions = {};
 
+const types = {
+    
 };
 
-request.config = function() {
+request.add = function(type, callback){
+    types[type] = callback;
+}
+
+request.create = function(requests, mocks) {
+    
+};
+
+request.config = function(options) {
 
 };
 
