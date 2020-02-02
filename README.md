@@ -7,9 +7,20 @@ yarn add nuomi-request
 
 # 使用
 ```js
+// mock.js
+export default {
+    // 自定义mock
+    getList: {
+        'status': 200,
+        'data|100': [{
+            'id|+1': 1,
+        }],
+    },
+}
+
 // config.js
 import request from 'nuomi-request';
-import Mock from 'mockjs';
+import mock from './mock';
 
 // 公共配置
 request.config({
@@ -20,7 +31,7 @@ request.config({
     // mock平台url
     mock: 'http://xxx/api/',
     // 可传入mock对象进行自定义mock
-    mock: Mock,
+    mock: mock,
     // 请求前，可做拦截
     before(){},
     // 请求结束，可做拦截
@@ -33,14 +44,6 @@ import request from 'nuomi-request';
 
 export default request.create({
     getList: 'path/getList:post'
-}, {
-    // 自定义mock
-    getList: {
-        'status': 200,
-        'data|100': [{
-            'id|+1': 1,
-        }],
-    },
 });
 
 // effects.js

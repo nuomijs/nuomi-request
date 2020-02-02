@@ -24,4 +24,10 @@ request.config = function(options) {
 
 };
 
+axios.jsonp = function() {
+    
+}
+
+request.axios = axios;
+
 export default request;
