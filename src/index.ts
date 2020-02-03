@@ -1,27 +1,19 @@
 import axios from 'axios';
 import jsonp from 'jsonp';
 
-function request() {
-
-};
+function request() {}
 
 const defaultOptions = {};
 
-const types = {
+const types = {};
 
+request.add = function(type, callback) {
+  types[type] = callback;
 };
 
-request.add = function(type, callback){
-    types[type] = callback;
-}
+request.create = function(requests) {};
 
-request.create = function(requests) {
-
-};
-
-request.config = function(options) {
-
-};
+request.config = function(options) {};
 
 request.axios = axios;
 
