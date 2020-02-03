@@ -8,7 +8,7 @@ function request() {
 const defaultOptions = {};
 
 const types = {
-    
+
 };
 
 request.add = function(type, callback){
@@ -16,16 +16,12 @@ request.add = function(type, callback){
 }
 
 request.create = function(requests) {
-    
+
 };
 
 request.config = function(options) {
 
 };
-
-axios.jsonp = function() {
-    
-}
 
 request.axios = axios;
 

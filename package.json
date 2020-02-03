@@ -2,6 +2,53 @@
   "dependencies": {
     "axios": "^0.19.0",
     "jsonp": "^0.2.1",
+    "lodash": "^4.17.15",
     "mockjs": "^1.1.0"
-  }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/jsonp": "^0.2.0",
+    "@types/lodash": "^4.14.149",
+    "@types/mockjs": "^1.0.2",
+    "babel-jest": "^25.1.0",
+    "cross-env": "^7.0.0",
+    "eslint": "^6.8.0",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.1"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run build:cjs",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel src --out-dir lib",
+    "clean": "rimraf lib",
+    "format": "prettier --write \"**/*{.js,.ts}\"",
+    "lint": "npm run format && eslint --fix --ext \".js,.ts\" .",
+    "test": "jest"
+  },
+  "name": "nuomi-request",
+  "description": "axios+jsonp+mock封装的请求库 # 安装 ``` yarn add nuomi-request ```",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuomijs/nuomi-request.git"
+  },
+  "keywords": [
+    "nuomi",
+    "nuomi-request",
+    "request",
+    "axios",
+    "jsonp"
+  ],
+  "author": "yinjiazeng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nuomijs/nuomi-request/issues"
+  },
+  "homepage": "https://github.com/nuomijs/nuomi-request#readme"
 }
