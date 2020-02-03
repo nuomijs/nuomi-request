@@ -1,7 +1,7 @@
 import axios from 'axios';
 import jsonp from 'jsonp';
 
-function request() {}
+function request(requests) {}
 
 const defaultOptions = {};
 
@@ -11,10 +11,6 @@ request.add = function(type, callback) {
   types[type] = callback;
 };
 
-request.create = function(requests) {};
-
 request.config = function(options) {};
-
-request.axios = axios;
 
 export default request;

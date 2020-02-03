@@ -42,12 +42,12 @@ request.config({
 // services.js
 import request from 'nuomi-request';
 
-export default request.create({
+export default request({
     getList: 'path/getList:post'
 });
 
 // effects.js
-import services from '@/services';
+import services from './services';
 
 export default {
     async getList(){

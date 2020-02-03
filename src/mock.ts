@@ -1,6 +1,9 @@
 import { mock as mockjs } from 'mockjs';
+import { RequestMock } from './types/mock';
 
-export default (mocks: object) => {
+let requestMock: RequestMock;
+
+requestMock = (mocks: object): object => {
   const result: object = {};
   if (mocks && typeof mocks === 'object') {
     const mockKeys = Object.keys(mocks);
@@ -11,3 +14,5 @@ export default (mocks: object) => {
   }
   return result;
 };
+
+export default requestMock;
