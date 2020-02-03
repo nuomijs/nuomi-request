@@ -1,6 +1,5 @@
 import axios from 'axios';
 import jsonp from 'jsonp';
-import mock from './mock';
 
 function request() {
 
@@ -16,7 +15,7 @@ request.add = function(type, callback){
     types[type] = callback;
 }
 
-request.create = function(requests, mocks) {
+request.create = function(requests) {
     
 };
 
