@@ -1,16 +1,21 @@
 import axios from 'axios';
-import jsonp from 'jsonp';
+const jsonp = require('jsonp');
+import { AxiosStatic } from './types/request';
 
-function request(requests) {}
+const request: AxiosStatic = axios;
 
 const defaultOptions = {};
 
-const types = {};
+const methods = {};
 
-request.add = function(type, callback) {
-  types[type] = callback;
+request.method = function(name: string, callback: Function) {
+  methods[name] = callback;
 };
 
-request.config = function(options) {};
+request.config = function(options: object) {};
+
+request.createServices = () => {};
+
+request.jsonp = () => {};
 
 export default request;

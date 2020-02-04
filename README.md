@@ -25,17 +25,13 @@ import mock from './mock';
 // 公共配置
 request.config({
     // 接口前缀
-    base: '/',
+    baseURL: '/',
     // 接口后缀
     suffix: '.do',
     // mock平台url
     mock: 'http://xxx/api/',
     // 可传入mock对象进行自定义mock
     mock: mock,
-    // 请求前，可做拦截
-    before(){},
-    // 请求结束，可做拦截
-    after(){},
 });
 
 
