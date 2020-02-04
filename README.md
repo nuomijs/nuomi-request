@@ -38,7 +38,7 @@ request.config({
 // services.js
 import request from 'nuomi-request';
 
-export default request({
+export default request.createServices({
     getList: 'path/getList:post'
 });
 
