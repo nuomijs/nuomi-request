@@ -1,21 +1,36 @@
 import axios from 'axios';
-const jsonp = require('jsonp');
+import jsonpAdapter from 'axios-jsonp';
+import * as warning from 'warning';
 import { AxiosStatic } from './types/request';
 
 const request: AxiosStatic = axios;
 
-const defaultOptions = {};
+const defaultOptions: object = {};
 
-const methods = {};
+const methods: object = {};
+
+const defaultMethodsKeys: string[] = ['get', 'post', 'delete', 'head', 'options', 'put', 'patch'];
 
 request.method = function(name: string, callback: Function) {
+  warning(defaultMethodsKeys.includes(name), `方法“${name}”已存在`);
   methods[name] = callback;
 };
 
 request.config = function(options: object) {};
 
-request.createServices = () => {};
+request.createServices = (requests: object) => {
+  const services = {};
 
-request.jsonp = () => {};
+  return services;
+};
+
+request.jsonp = (url: string, config?: object) => {
+  return axios({
+    url,
+    method: 'get',
+    adapter: jsonpAdapter,
+    ...config,
+  });
+};
 
 export default request;
