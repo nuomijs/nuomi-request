@@ -1,26 +1,40 @@
 import axios from 'axios';
 import * as warning from 'warning';
-import { AxiosStatic } from './types/request';
+import { mock as mockjs } from 'mockjs';
 
-const request: AxiosStatic = axios;
+const methods = {};
 
-const defaultOptions: object = {};
+const defaultMethodsKeys = ['get', 'post', 'delete', 'head', 'options', 'put', 'patch'];
 
-const methods: object = {};
+const axiosConfig = () => {};
 
-const defaultMethodsKeys: string[] = ['get', 'post', 'delete', 'head', 'options', 'put', 'patch'];
+const createMock = (mocks: object): object => {
+  const result: object = {};
+  if (mocks && typeof mocks === 'object') {
+    const mockKeys = Object.keys(mocks);
+    mockKeys.forEach((key: string) => {
+      const object: object = mocks[key];
+      result[key] = mockjs(object);
+    });
+  }
+  return result;
+};
 
-request.method = function(name: string, callback: Function) {
+const createMethod = (name: string, callback: Function) => {
   warning(defaultMethodsKeys.includes(name), `方法“${name}”已存在`);
   methods[name] = callback;
 };
 
-request.config = function(options: object) {};
-
-request.createServices = (requests: object) => {
+const createServices = (requests: object) => {
   const services = {};
 
   return services;
 };
 
-export default request;
+export {
+  axios,
+  axiosConfig,
+  createMock,
+  createMethod,
+  createServices,
+};

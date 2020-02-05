@@ -19,26 +19,28 @@ export default {
 }
 
 // config.js
-import request from 'nuomi-request';
+import { axiosConfig, createMock } from 'nuomi-request';
 import mock from './mock';
 
 // 公共配置
-request.config({
-    // 接口前缀
-    baseURL: '/',
-    // 接口后缀
-    suffix: '.do',
-    // mock平台url
-    mock: 'http://xxx/api/',
-    // 可传入mock对象进行自定义mock
-    mock: mock,
+if(process.env.NODE_ENV !== 'production') {
+  // mock平台url
+  createMock('http://xxx/api/');
+  // or 自定义mock
+  createMock(mock);
+}
+
+axiosConfig({
+  // 接口前缀
+  baseURL: '/',
+  // 接口后缀
+  suffix: '.do',
 });
 
-
 // services.js
-import request from 'nuomi-request';
+import { createServices } from 'nuomi-request';
 
-export default request.createServices({
+export default createServices({
     getList: 'path/getList:post'
 });
 
