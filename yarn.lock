@@ -1019,16 +1019,6 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
-"@types/jsonp@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@types/jsonp/-/jsonp-0.2.0.tgz#2579c5e4dfa6b2617bda18a5d368db2dbfe132a8"
-  integrity sha512-bKNj0zwAI/4cyyPYLNvmGBc2VXnaqxv6thL1TTwq5VdwATca9Pfx4xjIkYJYkrpcocvIXsJQcncAkFNXf8PuQQ==
-
-"@types/lodash@^4.14.149":
-  version "4.14.149"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"
-  integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
-
 "@types/mockjs@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@types/mockjs/-/mockjs-1.0.2.tgz#89887151c9b903028e9b569a28b4ad079d79943b"
@@ -1225,11 +1215,6 @@ aws4@^1.8.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.1.tgz#7e33d8f7d449b3f673cd72deb9abdc552dbe528e"
   integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
-
-axios-jsonp@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/axios-jsonp/-/axios-jsonp-1.0.4.tgz#28878a48bbf38dbf07875fa283d9cf958c63b498"
-  integrity sha512-KI5Fc4ery6DR+oneXG09hPZfGuNUW8Lblhe750h53Z0Eh5MRsrHn49YitDU4RsMk0HV+12zcvL2Q51QkOLGdIQ==
 
 axios@^0.19.0:
   version "0.19.0"

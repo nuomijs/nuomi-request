@@ -1,5 +1,4 @@
 import axios from 'axios';
-import jsonpAdapter from 'axios-jsonp';
 import * as warning from 'warning';
 import { AxiosStatic } from './types/request';
 
@@ -22,15 +21,6 @@ request.createServices = (requests: object) => {
   const services = {};
 
   return services;
-};
-
-request.jsonp = (url: string, config?: object) => {
-  return axios({
-    url,
-    method: 'get',
-    adapter: jsonpAdapter,
-    ...config,
-  });
 };
 
 export default request;

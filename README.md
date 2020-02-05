@@ -1,5 +1,5 @@
 # nuomi-request
-axios+jsonp+mock封装的请求库
+基于axios封装的请求库
 # 安装
 ```
 yarn add nuomi-request
