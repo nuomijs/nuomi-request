@@ -1,5 +1,5 @@
 declare module 'nuomi-request' {
-  import { AxiosStatic } from 'axios';
+  import { AxiosStatic, AxiosRequestConfig } from 'axios';
 
   interface CreateServices {
     (requests: object, mockData?: any): object;
@@ -11,6 +11,11 @@ declare module 'nuomi-request' {
 
   interface AxiosConfig {
     (options: object): void;
+  }
+
+  export interface AxiosRequestOptions extends AxiosRequestConfig {
+    loading?: boolean;
+    delay?: number;
   }
 
   export const createServices: CreateServices;

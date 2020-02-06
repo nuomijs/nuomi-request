@@ -11,11 +11,11 @@
   <script src="https://unpkg.com/mockjs@1.1.0/dist/mock.js"></script>
   <script src="https://unpkg.com/qs@6.9.1/dist/qs.js"></script>
   <script>
-  var mockjs = Mock;
-  var qs = Qs;
-  var process = {
+  window.mockjs = Mock;
+  window.qs = Qs;
+  window.process = {
     env: {
-      NODE_ENV: 'production',
+      NODE_ENV: '11',
     }
   }
   </script>
@@ -27,6 +27,13 @@
 
     var services = request.createServices({
       getData: '/getjson:postJSON',
+    }, {
+      getData: {
+        'list|1-10': [{
+        // 属性 id 是一个自增数，起始值为 1，每次增 1
+        'id|+1': 1
+    }]
+      }
     });
 
     axios.interceptors.request.use((config) => {

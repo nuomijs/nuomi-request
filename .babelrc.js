@@ -1,3 +1,5 @@
+const { NODE_ENV, BABEL_ENV } = process.env;
+
 module.exports = {
   presets: [
     [
@@ -6,9 +8,12 @@ module.exports = {
         targets: {
           browsers: ['ie >= 9'],
         },
-        modules: process.env.BABEL_ENV || false,
+        modules: BABEL_ENV || false,
       },
     ],
     '@babel/preset-typescript',
   ],
+  plugins: NODE_ENV === 'test' ? [
+    '@babel/transform-modules-commonjs',
+  ] : null,
 };
