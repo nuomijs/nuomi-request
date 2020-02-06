@@ -17,14 +17,16 @@ axiosConfig({
 
 
 // mock.js
+import { mock } from 'mockjs';
+
 export default {
   // 自定义mock
-  getList: {
+  getList: mock({
     'status': 200,
     'data|100': [{
         'id|+1': 1,
     }],
-  },
+  }),
 }
 
 
