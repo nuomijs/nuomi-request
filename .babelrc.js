@@ -13,7 +13,5 @@ module.exports = {
     ],
     '@babel/preset-typescript',
   ],
-  plugins: NODE_ENV === 'test' ? [
-    '@babel/transform-modules-commonjs',
-  ] : null,
+  plugins: NODE_ENV === 'test' ? ['@babel/transform-modules-commonjs'] : null,
 };

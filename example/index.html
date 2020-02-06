@@ -11,11 +11,10 @@
   <script src="https://unpkg.com/mockjs@1.1.0/dist/mock.js"></script>
   <script src="https://unpkg.com/qs@6.9.1/dist/qs.js"></script>
   <script>
-  window.mockjs = Mock;
   window.qs = Qs;
   window.process = {
     env: {
-      NODE_ENV: '11',
+      // NODE_ENV: 'production',
     }
   }
   </script>
@@ -28,11 +27,22 @@
     var services = request.createServices({
       getData: '/getjson:postJSON',
     }, {
-      getData: {
-        'list|1-10': [{
-        // 属性 id 是一个自增数，起始值为 1，每次增 1
-        'id|+1': 1
-    }]
+      getData: (data, opts) => {
+        if(data.username === 'xxx'){
+          return Mock.mock({
+            data: {
+              'list|1-10': [{
+                'id|+1': 1,
+              }],
+            },
+            status: 200,
+          })
+        }
+        return {
+          data: {},
+          message: '用户名错误',
+          status: 300,
+        }
       }
     });
 
@@ -44,7 +54,7 @@
       return data;
     })
 
-    services.getData({a:1}, { delay: 2000 }).then((res) => {
+    services.getData({username:'yyy'}, { delay: 2000 }).then((res) => {
       console.log(res)
     });
   </script>

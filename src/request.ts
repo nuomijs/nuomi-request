@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig, Method, AxiosPromise } from 'axios';
-import { mock as Mock } from 'mockjs';
 import { stringify } from 'qs';
 
 // axios扩展选项
@@ -14,22 +13,6 @@ const methods = {};
 
 const isObject = (obj: any) => {
   return {}.toString.call(obj) === `[object Object]`;
-};
-
-/**
- * @function 创建mock数据
- * @param originalMockData 原始mock对象
- */
-const getMockData = (originalMockData: object) => {
-  const mockData = {};
-  if (isObject(originalMockData)) {
-    Object.keys(originalMockData).forEach((key) => {
-      const object = originalMockData[key];
-      const data = Mock(object);
-      mockData[key] = data;
-    });
-  }
-  return mockData;
 };
 
 /**
@@ -66,23 +49,27 @@ const createMethod = (
  * @param requests
  * @param originalMockData
  */
-const createServices = (requests: object, originalMockData?: any) => {
+const createServices = (requests: object, mockData?: any) => {
   const services = {};
   if (isObject(requests)) {
     const names = Object.keys(requests);
-    let mockData: object = {};
-    if (process.env.NODE_ENV !== 'production' && isObject(originalMockData)) {
-      mockData = getMockData(originalMockData);
-    }
+    const isMock = isObject(mockData);
     names.forEach((name) => {
       const [url, method = 'get'] = requests[name].split(':');
-      const mockResponseData = mockData[name];
-      if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
+      let mockResponseData: object | Function;
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        isMock &&
+        !!(mockResponseData = mockData[name])
+      ) {
         services[name] = (data?: object, options?: AxiosRequestOptions) =>
           axios({
             url,
             data,
             adapter: (opts: AxiosRequestOptions) => {
+              if (typeof mockResponseData === 'function') {
+                mockResponseData = mockResponseData(data, opts);
+              }
               return new Promise((resolve) => {
                 setTimeout(() => {
                   resolve({
