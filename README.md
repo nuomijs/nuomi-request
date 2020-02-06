@@ -12,22 +12,19 @@ import { axiosConfig } from 'nuomi-request';
 
 // 公共配置
 axiosConfig({
-  // 接口前缀
   baseURL: '/',
-  // 接口后缀
-  suffix: '.do',
 });
 
 
 // mock.js
 export default {
-    // 自定义mock
-    getList: {
-        'status': 200,
-        'data|100': [{
-            'id|+1': 1,
-        }],
-    },
+  // 自定义mock
+  getList: {
+    'status': 200,
+    'data|100': [{
+        'id|+1': 1,
+    }],
+  },
 }
 
 
@@ -36,7 +33,7 @@ import { createServices } from 'nuomi-request';
 import mock from './mock';
 
 export default createServices({
-    getList: 'path/getList:post'
+  getList: 'path/getList:post'
 }, process.env.NODE_ENV !== 'production' ? mock : null);
 
 
@@ -44,14 +41,14 @@ export default createServices({
 import services from './services';
 
 export default {
-    async getList(){
-        const data = await services.getList();
-        this.disptach({
-            type: '_updateState',
-            payload: {
-                data,
-            }
-        });
-    }
+  async getList(){
+    const data = await services.getList();
+    this.disptach({
+      type: '_updateState',
+      payload: {
+          data,
+      }
+    });
+  }
 };
 ```
