@@ -1,23 +1,17 @@
 declare module 'nuomi-request' {
   import { AxiosStatic } from 'axios';
 
-  interface CreateMock {
-    (mocks: object): object,
-  }
-
   interface CreateServices {
-    (requests: object): object,
+    (requests: object, mockData?: any): object;
   }
 
   interface CreateMethod {
-    (name: string, callback: Function): void,
+    (name: string, callback: Function): void;
   }
 
   interface AxiosConfig {
-    (options: object): void,
+    (options: object): void;
   }
-
-  export const createMock: CreateMock;
 
   export const createServices: CreateServices;
 
