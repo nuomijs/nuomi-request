@@ -21,7 +21,9 @@
     "rimraf": "^3.0.1"
   },
   "files": [
-    "lib"
+    "lib",
+    "dist",
+    "request.d.ts"
   ],
   "scripts": {
     "build": "npm run build:lib && npm run build:dist",
@@ -37,7 +39,7 @@
   },
   "name": "nuomi-request",
   "description": "axios+jsonp+mock封装的请求库 # 安装 ``` yarn add nuomi-request ```",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/request.js",
   "typings": "request.d.ts",
   "repository": {
@@ -61,5 +63,9 @@
   "bugs": {
     "url": "https://github.com/nuomijs/nuomi-request/issues"
   },
-  "homepage": "https://github.com/nuomijs/nuomi-request#readme"
+  "homepage": "https://github.com/nuomijs/nuomi-request#readme",
+  "directories": {
+    "example": "example",
+    "lib": "lib"
+  }
 }
