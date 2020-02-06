@@ -67,13 +67,14 @@ const createServices = (requests: object, mockData?: any) => {
             url,
             data,
             adapter: (opts: AxiosRequestOptions) => {
+              let responseData = mockResponseData;
               if (typeof mockResponseData === 'function') {
-                mockResponseData = mockResponseData(data, opts);
+                responseData = mockResponseData(data, opts);
               }
               return new Promise((resolve) => {
                 setTimeout(() => {
                   resolve({
-                    data: mockResponseData,
+                    data: responseData,
                     status: 200,
                     statusText: 'ok',
                     config: opts,
