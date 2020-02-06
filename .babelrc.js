@@ -6,7 +6,7 @@ module.exports = {
         targets: {
           browsers: ['ie >= 9'],
         },
-        modules: process.env.BABEL_ENV === 'cjs' ? 'cjs' : false,
+        modules: process.env.BABEL_ENV || false,
       },
     ],
     '@babel/preset-typescript',

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <script src="https://unpkg.com/mockjs@1.1.0/dist/mock.js"></script>
+  <script src="https://unpkg.com/qs@6.9.1/dist/qs.js"></script>
+  <script>
+  var mockjs = Mock;
+  var qs = Qs;
+  var process = {
+    env: {
+      NODE_ENV: 'production',
+    }
+  }
+  </script>
+  <script src="../dist/request.js"></script>
+  <script>
+    request.axiosConfig({
+      baseURL: 'https://www.fastmock.site/mock/f4cfe9645413ed92b9e90cb83eff4ec6/',
+    });
+
+    var services = request.createServices({
+      getData: '/getjson:postJSON',
+    });
+
+    axios.interceptors.request.use((config) => {
+      return config;
+    })
+
+    axios.interceptors.response.use((data) => {
+      return data;
+    })
+
+    services.getData({a:1}, { delay: 2000 }).then((res) => {
+      console.log(res)
+    });
+  </script>
+</body>
+</html>

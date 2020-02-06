@@ -1,6 +1,6 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import * as warning from 'warning';
-import { mock as mockjs } from 'mockjs';
+import axios, { AxiosRequestConfig, Method } from 'axios';
+import { mock as Mock } from 'mockjs';
+import { stringify } from 'qs';
 
 interface Config extends AxiosRequestConfig {
   loading?: boolean;
@@ -21,7 +21,7 @@ const createMock = (mocks: object) => {
     const mockKeys = Object.keys(mocks);
     mockKeys.forEach((key) => {
       const object = mocks[key];
-      const data = mockjs(object);
+      const data = Mock(object);
       result[key] = data;
     });
   }
@@ -29,7 +29,9 @@ const createMock = (mocks: object) => {
 };
 
 const createMethod = (name: string, callback: Function) => {
-  warning(!!methods[name], `方法“${name}”已存在`);
+  if (process.env.NODE_ENV !== 'production' && !!methods[name]) {
+    console.warn(`方法“${name}”已存在，若对项目没有影响，请忽略该警告！`);
+  }
   const cb = (methods[name] = callback);
   return cb;
 };
@@ -44,7 +46,7 @@ const createServices = (requests: object, mockData?: any) => {
   names.forEach((name) => {
     const [url, method = 'get'] = requests[name].split(':');
     const mockResponseData = mockResult[name];
-    if (!!mockResponseData) {
+    if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
       services[name] = (data?: object, config?: Config) =>
         axios({
           url,
@@ -65,21 +67,40 @@ const createServices = (requests: object, mockData?: any) => {
           ...config,
         });
     } else {
-      services[name] = (data?: object, config?: Config) =>
-        methods[method](url, data, config);
+      services[name] = (data?: object, config?: Config) => methods[method](url, data, config);
     }
   });
   return services;
 };
 
-['get', 'post'].forEach((method: string) => {
+['get', 'delete'].forEach((method: Method) => {
   createMethod(method, (url: string, data?: object, config?: Config) => {
     return axios({
       url,
-      method: 'get',
-      [method === 'get' ? 'params' : 'data']: data,
+      method,
+      params: data,
       ...config,
     });
+  });
+});
+
+['post', 'put'].forEach((method: Method) => {
+  createMethod(method, (url: string, data?: object, config?: Config) => {
+    return axios({
+      url,
+      method,
+      data: stringify(data),
+      ...config,
+    });
+  });
+});
+
+createMethod('postJSON', (url: string, data?: object, config?: Config) => {
+  return axios({
+    url,
+    method: 'post',
+    data: data,
+    ...config,
   });
 });
 
