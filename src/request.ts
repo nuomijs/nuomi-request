@@ -45,24 +45,24 @@ const createMethod = (
 };
 
 /**
- * @function 创建services
- * @param requests
- * @param originalMockData
+ * @function 创建requests
+ * @param urls
+ * @param mockData
  */
-const createServices = (requests: object, mockData?: any) => {
-  const services = {};
-  if (isObject(requests)) {
-    const names = Object.keys(requests);
+const createRequests = (urls: object, mockData?: any) => {
+  const requests = {};
+  if (isObject(urls)) {
+    const names = Object.keys(urls);
     const isMock = isObject(mockData);
     names.forEach((name) => {
-      const [url, method = 'get'] = requests[name].split(':');
+      const [url, method = 'get'] = urls[name].split(':');
       let mockResponseData: object | Function;
       if (
         process.env.NODE_ENV !== 'production' &&
         isMock &&
         !!(mockResponseData = mockData[name])
       ) {
-        services[name] = (data?: object, options?: AxiosRequestOptions) =>
+        requests[name] = (data?: object, options?: AxiosRequestOptions) =>
           axios({
             url,
             data,
@@ -86,12 +86,12 @@ const createServices = (requests: object, mockData?: any) => {
             ...options,
           });
       } else {
-        services[name] = (data?: object, options?: AxiosRequestOptions) =>
+        requests[name] = (data?: object, options?: AxiosRequestOptions) =>
           methods[method](url, data, options);
       }
     });
   }
-  return services;
+  return requests;
 };
 
 ['get', 'delete'].forEach((method: Method) => {
@@ -125,4 +125,4 @@ createMethod('postJSON', (url, data, options) => {
   });
 });
 
-export { axios, axiosConfig, createMethod, createServices };
+export { axios, axiosConfig, createMethod, createRequests };

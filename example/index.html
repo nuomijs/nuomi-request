@@ -24,7 +24,7 @@
       baseURL: 'https://www.fastmock.site/mock/f4cfe9645413ed92b9e90cb83eff4ec6/',
     });
 
-    var services = request.createServices({
+    var requests = request.createRequests({
       getData: '/getjson:postJSON',
     }, {
       getData: (data, opts) => {
@@ -54,7 +54,7 @@
       return data;
     })
 
-    services.getData({username:'yyy'}, { delay: 2000 }).then((res) => {
+    requests.getData({username:'xxx'}, { delay: 2000 }).then((res) => {
       console.log(res)
     });
   </script>
