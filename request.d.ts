@@ -1,21 +1,30 @@
 declare module 'nuomi-request' {
-  import { AxiosStatic, AxiosRequestConfig } from 'axios';
-
-  interface CreateRequestsFunction {
-    (urls: object, mockData?: any): object;
-  }
-
-  interface CreateMethodFunction {
-    (name: string, callback: Function): void;
-  }
-
-  interface AxiosConfigFunction {
-    (options: object): void;
-  }
+  import { AxiosStatic, AxiosRequestConfig, AxiosPromise } from 'axios';
 
   export interface AxiosRequestOptions extends AxiosRequestConfig {
     loading?: boolean;
     delay?: number;
+  }
+
+  export interface CreateRequestsFunction {
+    (urls: object, mockData?: any): object;
+  }
+
+  export interface CreateMethodFunction {
+    (
+      name: string,
+      callback: (
+        url: string,
+        data?: object,
+        options?: AxiosRequestOptions,
+        ...rest: any[]
+      ) => AxiosPromise,
+      force?: boolean,
+    ): void;
+  }
+
+  export interface AxiosConfigFunction {
+    (options: object): void;
   }
 
   export const createRequests: CreateRequestsFunction;

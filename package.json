@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "axios": "^0.19.0",
-    "qs": "^6.9.1"
+    "invariant": "^2.2.4",
+    "qs": "^6.9.1",
+    "typescript": "^3.7.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -9,11 +11,14 @@
     "@babel/plugin-transform-modules-commonjs": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
+    "@types/invariant": "^2.2.31",
     "@types/node": "^13.7.0",
     "@types/qs": "^6.9.0",
+    "@typescript-eslint/parser": "^2.19.2",
     "babel-jest": "^25.1.0",
     "cross-env": "^7.0.0",
     "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.1"
@@ -31,8 +36,8 @@
     "build:umd": "cross-env BABEL_ENV=umd babel src/*.ts --out-dir dist --extensions .ts",
     "clean:lib": "rimraf lib",
     "clean:dist": "rimraf dist",
-    "format": "prettier --write \"**/*{.js,.ts}\"",
-    "lint": "npm run format && eslint --fix --ext \".js,.ts\" .",
+    "format": "prettier --write **/*.ts",
+    "lint": "npm run format && eslint --fix --ext .ts .",
     "test": "jest"
   },
   "name": "nuomi-request",
