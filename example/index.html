@@ -9,23 +9,22 @@
 <body>
   <script src="https://unpkg.com/axios/dist/axios.js"></script>
   <script src="https://unpkg.com/mockjs@1.1.0/dist/mock.js"></script>
-  <script src="https://unpkg.com/qs@6.9.1/dist/qs.js"></script>
   <script>
-  window.qs = Qs;
   window.process = {
     env: {
       // NODE_ENV: 'production',
     }
   }
   </script>
-  <script src="../dist/request.js"></script>
+  <script src="../dist/dist.min.js"></script>
   <script>
-    request.axiosConfig({
+    NuomiRequest.axiosConfig({
+      extension: '.do',
       baseURL: 'https://www.fastmock.site/mock/f4cfe9645413ed92b9e90cb83eff4ec6/',
     });
 
-    var requests = request.createRequests({
-      getData: '/getjson:postJSON',
+    var services = NuomiRequest.createServices({
+      getData: 'POST /getjson/:username',
     }, {
       getData: (data, opts) => {
         if(data.username === 'xxx'){
@@ -54,7 +53,7 @@
       return data;
     })
 
-    requests.getData({username:'xxx'}, { delay: 2000 }).then((res) => {
+    services.getData({username:'xxx'}, { extension: '.php' }).then((res) => {
       console.log(res)
     });
   </script>

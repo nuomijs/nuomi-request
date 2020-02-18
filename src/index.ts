@@ -1,27 +1,27 @@
-import axios, { AxiosRequestConfig, Method, AxiosPromise } from 'axios';
-import { stringify } from 'qs';
-import * as invariant from 'invariant';
-import { globalWindow, isObject, formatUrl } from './util';
+import axios, { Method, AxiosPromise } from 'axios';
+import { AxiosRequestOptions, FormatResult } from './types';
+import { globalWindow, isObject, format } from './util';
 
-// axios扩展选项
-interface AxiosRequestOptions extends AxiosRequestConfig {
-  // 接口扩展名，.do .php等
-  extension?: string;
-  // 是否缓存，开启后url将带有“?_=时间戳”参数
-  cache?: boolean;
-  // loading控制
-  loading?: boolean;
-  // mock数据时延时控制，默认500ms
-  delay?: number;
-}
+export { default as axios } from './axios';
 
 const methods = {};
+
+const request = (
+  method: string,
+  url: string,
+  data?: object,
+  options?: AxiosRequestOptions,
+  ...rest: any[]
+) => {
+  const result: FormatResult = format(url, data);
+  return methods[method](result.url, result.data, options, ...rest);
+};
 
 /**
  * @function 为axios配置默认值
  * @param options
  */
-const axiosConfig = (options: AxiosRequestOptions) => {
+export const axiosConfig = (options: AxiosRequestOptions) => {
   if (isObject(options)) {
     Object.keys(options).forEach((key) => {
       axios.defaults[key] = options[key];
@@ -35,7 +35,7 @@ const axiosConfig = (options: AxiosRequestOptions) => {
  * @param name
  * @param callback
  */
-const createMethod = (
+export const createMethod = (
   name: string,
   callback: (
     url: string,
@@ -46,39 +46,29 @@ const createMethod = (
   force?: boolean,
 ) => {
   const method = name.toUpperCase();
-  invariant(
-    !force && !!methods[method],
-    `方法“${method}”已存在，替换该方法可能会影响工程的正常运行，若没有风险，请将force参数设置为true！`,
-  );
+  if (process.env.NODE_ENV !== 'production' && !force && !!methods[method]) {
+    throw new Error(`方法“${method}”已存在，替换该方法可能会影响工程的正常运行，若没有风险，请将force参数设置为true！`);
+  }
   const cb = (methods[method] = callback);
   return cb;
 };
 
-const request = (
-  method: string,
-  url: string,
-  data?: object,
-  options?: AxiosRequestOptions,
-  ...rest: any[]
-) => {
-  return methods[method](url, data, options, ...rest);
-};
-
 /**
- * @function 创建requests
- * @param urls
+ * @function 创建services
+ * @param api
  * @param mockData
  */
-const createRequests = (urls: object, mockData?: any) => {
-  const requests = {};
+export const createServices = (api: object, mockData?: any) => {
+  const result = {};
 
-  if (isObject(urls)) {
-    const names = Object.keys(urls);
+  if (isObject(api)) {
+    const names = Object.keys(api);
     const isMock = isObject(mockData);
 
     names.forEach((name) => {
-      let [method = 'GET', url] = urls[name].split(' ');
+      let [method = 'GET', url] = api[name].split(' ');
       let mockResponseData: object | Function;
+
       if (
         process.env.NODE_ENV !== 'production' &&
         isMock &&
@@ -88,11 +78,12 @@ const createRequests = (urls: object, mockData?: any) => {
       } else {
         method = method.toUpperCase();
       }
-      requests[name] = (data?: object, options?: AxiosRequestOptions) =>
-          request(method, url, data, options, mockResponseData);
+
+      result[name] = (data?: object, options?: AxiosRequestOptions) =>
+        request(method, url, data, options, mockResponseData);
     });
   }
-  return requests;
+  return result;
 };
 
 if (process.env.NODE_ENV !== 'production') {
@@ -102,9 +93,11 @@ if (process.env.NODE_ENV !== 'production') {
       data,
       adapter: (opts: AxiosRequestOptions) => {
         let responseData = mockResponseData;
+
         if (typeof mockResponseData === 'function') {
           responseData = mockResponseData(data, opts);
         }
+
         return new Promise((resolve) => {
           globalWindow.setTimeout(() => {
             resolve({
@@ -114,7 +107,7 @@ if (process.env.NODE_ENV !== 'production') {
               config: opts,
               headers: opts.headers,
             });
-          }, opts.delay || 500);
+          }, opts.delay || 300);
         });
       },
       ...options,
@@ -122,35 +115,24 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-['GET', 'DELETE'].forEach((method: Method) => {
+['GET', 'DELETE', 'HEAD', 'OPTIONS'].forEach((method: Method) => {
   createMethod(method, (url, data, options) => {
     return axios({
       url,
       method,
-      params: { ...data, ...options.data },
       ...options,
+      params: { ...data, ...options.params },
     });
   });
 });
 
-['POST', 'PUT'].forEach((method: Method) => {
+['POST', 'PUT', 'PATCH'].forEach((method: Method) => {
   createMethod(method, (url, data, options) => {
     return axios({
       url,
       method,
-      data: data ? stringify(data) : null,
       ...options,
+      data: isObject(data) ? { ...data, ...options.data } : data,
     });
   });
 });
-
-createMethod('POSTJSON', (url, data, options) => {
-  return axios({
-    url,
-    method: 'POST',
-    data: { ...data, ...options.data },
-    ...options,
-  });
-});
-
-export { axios, axiosConfig, createMethod, createRequests };

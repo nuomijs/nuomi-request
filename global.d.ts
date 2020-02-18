@@ -2,11 +2,13 @@ declare module 'nuomi-request' {
   import { AxiosStatic, AxiosRequestConfig, AxiosPromise } from 'axios';
 
   export interface AxiosRequestOptions extends AxiosRequestConfig {
-    loading?: boolean;
+    extension?: string;
+    cache?: boolean;
+    loading?: any;
     delay?: number;
   }
 
-  export interface CreateRequestsFunction {
+  export interface CreateServicesFunction {
     (urls: object, mockData?: any): object;
   }
 
@@ -27,7 +29,7 @@ declare module 'nuomi-request' {
     (options: object): void;
   }
 
-  export const createRequests: CreateRequestsFunction;
+  export const createServices: CreateServicesFunction;
 
   export const createMethod: CreateMethodFunction;
 
