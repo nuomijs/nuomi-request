@@ -30,21 +30,21 @@ export default {
 }
 
 
-// requests.js
-import { createRequests } from 'nuomi-request';
+// services.js
+import { createServices } from 'nuomi-request';
 import mock from './mock';
 
-export default createRequests({
+export default createServices({
   getList: 'path/getList:post'
 }, process.env.NODE_ENV !== 'production' ? mock : null);
 
 
 // effects.js
-import requests from './requests';
+import services from './services';
 
 export default {
   async getList(){
-    const data = await requests.getList();
+    const data = await services.getList();
     this.disptach({
       type: '_updateState',
       payload: {
