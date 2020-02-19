@@ -124,7 +124,7 @@ if (process.env.NODE_ENV !== 'production') {
               config: opts,
               headers: opts.headers,
             });
-          }, opts.delay || 300);
+          }, opts.delay || axios.defaults['delay'] || 300);
         });
       },
       ...options,

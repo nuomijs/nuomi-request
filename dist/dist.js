@@ -437,7 +437,7 @@
 	                            config: opts,
 	                            headers: opts.headers,
 	                        });
-	                    }, opts.delay || 300);
+	                    }, opts.delay || axios$1.default.defaults['delay'] || 300);
 	                });
 	            } }, options));
 	    });

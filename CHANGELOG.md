@@ -1,5 +1,8 @@
 # 更新日志：
 
+## 0.2.1 (2020-02-19)
+* 修复axiosConfig不能配置delay问题
+
 ## 0.2.0 (2020-02-19)
 * createRequests更名为createServices
 * 新增createMock方法
