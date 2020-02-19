@@ -48,7 +48,7 @@
   },
   "name": "nuomi-request",
   "description": "axios+jsonp+mock封装的请求库 # 安装 ``` yarn add nuomi-request ```",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/index.js",
   "typings": "request.d.ts",
   "repository": {
@@ -64,7 +64,7 @@
   ],
   "jest": {
     "transform": {
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.(j|t)s$": "babel-jest"
     }
   },
   "author": "yinjiazeng",

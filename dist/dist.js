@@ -241,22 +241,28 @@
 
 	var util = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var PARAM_REGEXP = /(:\w+)/;
+	var PARAM_REGEXP = /(\/:\w+)/;
 	var EXT_REGEXP = /\.\w+$/;
-	var SLASH_REGEXP = /\/+$/;
 	exports.globalWindow = typeof window !== 'undefined' ? window : commonjsGlobal;
 	exports.isObject = function (obj) {
 	    return {}.toString.call(obj) === "[object Object]";
 	};
 	exports.isString = function (obj) { return typeof obj === 'string'; };
-	exports.format = function (url, data) {
+	/**
+	 * @function 格式化url
+	 * @param {string} url 请求url  /api /api/:id
+	 * @param {object} data 请求参数
+	 * @returns {string}
+	 */
+	exports.formatURL = function (url, data) {
 	    var newUrl = '';
 	    // 匹配动态参数
 	    if (PARAM_REGEXP.test(url)) {
+	        var params_1 = exports.isObject(data) ? data : {};
 	        url.split(PARAM_REGEXP).forEach(function (path) {
-	            if (path.startsWith(':')) {
-	                var key = path.substr(1);
-	                newUrl += data[key] !== undefined ? data[key] : '';
+	            if (path.startsWith('/:')) {
+	                var key = path.substr(2);
+	                newUrl += params_1[key] !== undefined ? "/" + params_1[key] : '/';
 	            }
 	            else {
 	                newUrl += path;
@@ -266,14 +272,19 @@
 	    else {
 	        newUrl = url;
 	    }
-	    return { url: newUrl, data: data };
+	    return newUrl;
 	};
+	/**
+	 * @function 组合url
+	 * @param {string} url 请求url
+	 * @param {string} extension 扩展符号, .do do .php php
+	 * @param {boolean} cache 是否缓存，设置为false将会添加"?_=时间戳"参数
+	 */
 	exports.combineURL = function (url, extension, cache) {
 	    var paramStart = url.indexOf('?');
 	    var hasParam = paramStart !== -1;
 	    var path = hasParam ? url.substr(0, paramStart) : url;
 	    var search = hasParam ? url.substr(paramStart) : '';
-	    path = path.replace(SLASH_REGEXP, '');
 	    if (extension && exports.isString(extension) && !EXT_REGEXP.test(path)) {
 	        path += extension.startsWith('.') ? extension : "." + extension;
 	    }
@@ -289,7 +300,7 @@
 	var util_1 = util.globalWindow;
 	var util_2 = util.isObject;
 	var util_3 = util.isString;
-	var util_4 = util.format;
+	var util_4 = util.formatURL;
 	var util_5 = util.combineURL;
 
 	var tslib_1 = getCjsExportFromNamespace(tslib_es6);
@@ -301,16 +312,16 @@
 
 	var createAxios = function (instance) {
 	    instance.interceptors.request.use(function (options) {
-	        var url = options.url, extension = options.extension, cache = options.cache, rest = tslib_1.__rest(options, ["url", "extension", "cache"]);
+	        var url = options.url, extension = options.extension, cache = options.cache;
 	        var defaults = axios$1.default.defaults;
 	        if (extension === undefined) {
-	            extension = defaults.extension;
+	            extension = defaults['extension'];
 	        }
 	        if (cache === undefined) {
-	            cache = defaults.cache;
+	            cache = defaults['cache'];
 	        }
 	        url = util.combineURL(url, extension, cache);
-	        return tslib_1.__assign({ url: url }, rest);
+	        return tslib_1.__assign(tslib_1.__assign({}, options), { url: url });
 	    });
 	    return instance;
 	};
@@ -332,17 +343,23 @@
 
 	exports.axios = axios.default;
 	var methods = {};
+	var mocks = {};
 	var request = function (method, url, data, options) {
 	    var rest = [];
 	    for (var _i = 4; _i < arguments.length; _i++) {
 	        rest[_i - 4] = arguments[_i];
 	    }
-	    var result = util.format(url, data);
-	    return methods[method].apply(methods, tslib_1.__spreadArrays([result.url, result.data, options], rest));
+	    var newUrl = util.formatURL(url, data);
+	    var req = methods[method];
+	    if (!req) {
+	        throw new Error("\u4E0D\u5B58\u5728\u8BF7\u6C42\u65B9\u6CD5\u201C" + method + "\u201D");
+	    }
+	    return req.apply(void 0, tslib_1.__spreadArrays([newUrl, data, options], rest));
 	};
 	/**
 	 * @function 为axios配置默认值
-	 * @param options
+	 * @param {object} options 配置项
+	 * @returns {object}
 	 */
 	exports.axiosConfig = function (options) {
 	    if (util.isObject(options)) {
@@ -353,9 +370,20 @@
 	    return axios$1.default.defaults;
 	};
 	/**
+	 * @function 创建mock数据
+	 * @param {object} mock mock数据
+	 */
+	exports.createMock = function (mock) {
+	    util.isObject(mock) &&
+	        Object.keys(mock).forEach(function (key) {
+	            mocks[key] = mock[key];
+	        });
+	};
+	/**
 	 * @function 创建请求方法
-	 * @param name
-	 * @param callback
+	 * @param {string} name 请求方法
+	 * @param {function} callback 请求回调
+	 * @returns {function}
 	 */
 	exports.createMethod = function (name, callback, force) {
 	    var method = name.toUpperCase();
@@ -367,20 +395,19 @@
 	};
 	/**
 	 * @function 创建services
-	 * @param api
-	 * @param mockData
+	 * @param {object} api 请求api对象
+	 * @param {any} mockData mock数据
+	 * @returns {object}
 	 */
 	exports.createServices = function (api, mockData) {
 	    var result = {};
 	    if (util.isObject(api)) {
 	        var names = Object.keys(api);
-	        var isMock_1 = util.isObject(mockData);
+	        var mock_1 = util.isObject(mockData) ? mockData : {};
 	        names.forEach(function (name) {
-	            var _a = api[name].split(' '), _b = _a[0], method = _b === void 0 ? 'GET' : _b, url = _a[1];
-	            var mockResponseData;
-	            if (process.env.NODE_ENV !== 'production' &&
-	                isMock_1 &&
-	                !!(mockResponseData = mockData[name])) {
+	            var _a = api[name].split(/\s+/), _b = _a[0], method = _b === void 0 ? 'GET' : _b, url = _a[1];
+	            var mockResponseData = mock_1[name] || mocks[name];
+	            if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
 	                method = 'MOCK-REQUEST';
 	            }
 	            else {
@@ -433,13 +460,15 @@
 	var index = unwrapExports(src);
 	var src_1 = src.axios;
 	var src_2 = src.axiosConfig;
-	var src_3 = src.createMethod;
-	var src_4 = src.createServices;
+	var src_3 = src.createMock;
+	var src_4 = src.createMethod;
+	var src_5 = src.createServices;
 
 	exports.axios = src_1;
 	exports.axiosConfig = src_2;
-	exports.createMethod = src_3;
-	exports.createServices = src_4;
+	exports.createMethod = src_4;
+	exports.createMock = src_3;
+	exports.createServices = src_5;
 	exports.default = index;
 
 	Object.defineProperty(exports, '__esModule', { value: true });

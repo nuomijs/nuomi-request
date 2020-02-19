@@ -20,12 +20,11 @@
   <script>
     NuomiRequest.axiosConfig({
       extension: '.do',
+      cache: false,
       baseURL: 'https://www.fastmock.site/mock/f4cfe9645413ed92b9e90cb83eff4ec6/',
     });
 
-    var services = NuomiRequest.createServices({
-      getData: 'POST /getjson/:username',
-    }, {
+    NuomiRequest.createMock({
       getData: (data, opts) => {
         if(data.username === 'xxx'){
           return Mock.mock({
@@ -45,15 +44,11 @@
       }
     });
 
-    axios.interceptors.request.use((config) => {
-      return config;
-    })
+    var services = NuomiRequest.createServices({
+      getData: 'POST /getjson/:username',
+    });
 
-    axios.interceptors.response.use((data) => {
-      return data;
-    })
-
-    services.getData({username:'xxx'}, { extension: '.php' }).then((res) => {
+    services.getData({ username:'xxx' }, { data: { a: 1 } }).then((res) => {
       console.log(res)
     });
   </script>

@@ -5,19 +5,19 @@ import { combineURL } from './util';
 const createAxios = <T extends AxiosInstance>(instance: T): T => {
   instance.interceptors.request.use(
     (options: AxiosRequestOptions): AxiosRequestOptions => {
-      let { url, extension, cache, ...rest } = options;
+      let { url, extension, cache } = options;
       const { defaults } = axios;
 
       if (extension === undefined) {
-        extension = defaults.extension;
+        extension = defaults['extension'];
       }
 
       if (cache === undefined) {
-        cache = defaults.cache;
+        cache = defaults['cache'];
       }
 
       url = combineURL(url, extension, cache);
-      return { url, ...rest };
+      return { ...options, url };
     },
   );
   return instance;

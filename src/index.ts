@@ -1,10 +1,11 @@
 import axios, { Method, AxiosPromise } from 'axios';
-import { AxiosRequestOptions, FormatResult } from './types';
-import { globalWindow, isObject, format } from './util';
+import { AxiosRequestOptions } from './types';
+import { globalWindow, isObject, formatURL } from './util';
 
 export { default as axios } from './axios';
 
 const methods = {};
+const mocks = {};
 
 const request = (
   method: string,
@@ -13,15 +14,20 @@ const request = (
   options?: AxiosRequestOptions,
   ...rest: any[]
 ) => {
-  const result: FormatResult = format(url, data);
-  return methods[method](result.url, result.data, options, ...rest);
+  const newUrl: string = formatURL(url, data);
+  const req = methods[method];
+  if (!req) {
+    throw new Error(`不存在请求方法“${method}”`);
+  }
+  return req(newUrl, data, options, ...rest);
 };
 
 /**
  * @function 为axios配置默认值
- * @param options
+ * @param {object} options 配置项
+ * @returns {object}
  */
-export const axiosConfig = (options: AxiosRequestOptions) => {
+export const axiosConfig = (options: AxiosRequestOptions): object => {
   if (isObject(options)) {
     Object.keys(options).forEach((key) => {
       axios.defaults[key] = options[key];
@@ -31,9 +37,21 @@ export const axiosConfig = (options: AxiosRequestOptions) => {
 };
 
 /**
+ * @function 创建mock数据
+ * @param {object} mock mock数据
+ */
+export const createMock = (mock: object): void => {
+  isObject(mock) &&
+    Object.keys(mock).forEach((key) => {
+      mocks[key] = mock[key];
+    });
+};
+
+/**
  * @function 创建请求方法
- * @param name
- * @param callback
+ * @param {string} name 请求方法
+ * @param {function} callback 请求回调
+ * @returns {function}
  */
 export const createMethod = (
   name: string,
@@ -44,10 +62,12 @@ export const createMethod = (
     ...rest: any[]
   ) => AxiosPromise,
   force?: boolean,
-) => {
+): Function => {
   const method = name.toUpperCase();
   if (process.env.NODE_ENV !== 'production' && !force && !!methods[method]) {
-    throw new Error(`方法“${method}”已存在，替换该方法可能会影响工程的正常运行，若没有风险，请将force参数设置为true！`);
+    throw new Error(
+      `方法“${method}”已存在，替换该方法可能会影响工程的正常运行，若没有风险，请将force参数设置为true！`,
+    );
   }
   const cb = (methods[method] = callback);
   return cb;
@@ -55,25 +75,22 @@ export const createMethod = (
 
 /**
  * @function 创建services
- * @param api
- * @param mockData
+ * @param {object} api 请求api对象
+ * @param {any} mockData mock数据
+ * @returns {object}
  */
-export const createServices = (api: object, mockData?: any) => {
+export const createServices = (api: object, mockData?: any): object => {
   const result = {};
 
   if (isObject(api)) {
     const names = Object.keys(api);
-    const isMock = isObject(mockData);
+    const mock = isObject(mockData) ? mockData : {};
 
     names.forEach((name) => {
-      let [method = 'GET', url] = api[name].split(' ');
-      let mockResponseData: object | Function;
+      let [method = 'GET', url] = api[name].split(/\s+/);
+      const mockResponseData = mock[name] || mocks[name];
 
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        isMock &&
-        !!(mockResponseData = mockData[name])
-      ) {
+      if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
         method = 'MOCK-REQUEST';
       } else {
         method = method.toUpperCase();

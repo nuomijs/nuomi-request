@@ -6,13 +6,6 @@ export interface AxiosRequestOptions extends AxiosRequestConfig {
   extension?: string;
   // 是否缓存，开启后url将带有“?_=时间戳”参数
   cache?: boolean;
-  // loading控制
-  loading?: any;
   // mock数据时延时控制，默认300ms
   delay?: number;
-}
-
-export interface FormatResult {
-  url: string;
-  data: object;
 }
