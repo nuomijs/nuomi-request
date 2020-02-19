@@ -20,7 +20,7 @@ declare module 'nuomi-request' {
     force?: boolean,
   ) => void;
 
-  export const createMock: (options: object) => void;
+  export const createMock: (mockData: object) => void;
 
   export const axiosConfig: (options: object) => void;
 

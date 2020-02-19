@@ -40,10 +40,10 @@ export const axiosConfig = (options: AxiosRequestOptions): object => {
  * @function 创建mock数据
  * @param {object} mock mock数据
  */
-export const createMock = (mock: object): void => {
-  isObject(mock) &&
-    Object.keys(mock).forEach((key) => {
-      mocks[key] = mock[key];
+export const createMock = (mockData: object): void => {
+  isObject(mockData) &&
+    Object.keys(mockData).forEach((key) => {
+      mocks[key] = mockData[key];
     });
 };
 

@@ -373,10 +373,10 @@
 	 * @function 创建mock数据
 	 * @param {object} mock mock数据
 	 */
-	exports.createMock = function (mock) {
-	    util.isObject(mock) &&
-	        Object.keys(mock).forEach(function (key) {
-	            mocks[key] = mock[key];
+	exports.createMock = function (mockData) {
+	    util.isObject(mockData) &&
+	        Object.keys(mockData).forEach(function (key) {
+	            mocks[key] = mockData[key];
 	        });
 	};
 	/**

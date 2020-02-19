@@ -50,7 +50,7 @@
   "description": "axios+jsonp+mock封装的请求库 # 安装 ``` yarn add nuomi-request ```",
   "version": "0.2.0",
   "main": "lib/index.js",
-  "typings": "request.d.ts",
+  "typings": "global.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nuomijs/nuomi-request.git"
