@@ -7,6 +7,10 @@ export const isObject = (obj: any) => {
   return {}.toString.call(obj) === `[object Object]`;
 };
 
+export const isObjectLike = (obj: any) => {
+  return obj && typeof obj === 'object';
+};
+
 export const isString = (obj: any): boolean => typeof obj === 'string';
 
 /**

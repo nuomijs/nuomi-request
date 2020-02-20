@@ -247,6 +247,9 @@
 	exports.isObject = function (obj) {
 	    return {}.toString.call(obj) === "[object Object]";
 	};
+	exports.isObjectLike = function (obj) {
+	    return obj && typeof obj === 'object';
+	};
 	exports.isString = function (obj) { return typeof obj === 'string'; };
 	/**
 	 * @function 格式化url
@@ -299,9 +302,10 @@
 	unwrapExports(util);
 	var util_1 = util.globalWindow;
 	var util_2 = util.isObject;
-	var util_3 = util.isString;
-	var util_4 = util.formatURL;
-	var util_5 = util.combineURL;
+	var util_3 = util.isObjectLike;
+	var util_4 = util.isString;
+	var util_5 = util.formatURL;
+	var util_6 = util.combineURL;
 
 	var tslib_1 = getCjsExportFromNamespace(tslib_es6);
 
@@ -344,6 +348,7 @@
 	exports.axios = axios.default;
 	var methods = {};
 	var mocks = {};
+	var MOCK_REQUEST = '__MOCK_REQUEST__';
 	var request = function (method, url, data, options) {
 	    var rest = [];
 	    for (var _i = 4; _i < arguments.length; _i++) {
@@ -362,7 +367,7 @@
 	 * @returns {object}
 	 */
 	exports.axiosConfig = function (options) {
-	    if (util.isObject(options)) {
+	    if (util.isObjectLike(options)) {
 	        Object.keys(options).forEach(function (key) {
 	            axios$1.default.defaults[key] = options[key];
 	        });
@@ -374,7 +379,7 @@
 	 * @param {object} mock mock数据
 	 */
 	exports.createMock = function (mockData) {
-	    util.isObject(mockData) &&
+	    util.isObjectLike(mockData) &&
 	        Object.keys(mockData).forEach(function (key) {
 	            mocks[key] = mockData[key];
 	        });
@@ -401,14 +406,14 @@
 	 */
 	exports.createServices = function (api, mockData) {
 	    var result = {};
-	    if (util.isObject(api)) {
+	    if (util.isObjectLike(api)) {
 	        var names = Object.keys(api);
-	        var mock_1 = util.isObject(mockData) ? mockData : {};
+	        var mock_1 = util.isObjectLike(mockData) ? mockData : {};
 	        names.forEach(function (name) {
 	            var _a = api[name].split(/\s+/), _b = _a[0], method = _b === void 0 ? 'GET' : _b, url = _a[1];
 	            var mockResponseData = mock_1[name] || mocks[name];
 	            if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
-	                method = 'MOCK-REQUEST';
+	                method = MOCK_REQUEST;
 	            }
 	            else {
 	                method = method.toUpperCase();
@@ -421,7 +426,7 @@
 	    return result;
 	};
 	if (process.env.NODE_ENV !== 'production') {
-	    exports.createMethod('MOCK-REQUEST', function (url, data, options, mockResponseData) {
+	    exports.createMethod(MOCK_REQUEST, function (url, data, options, mockResponseData) {
 	        return axios$1.default(tslib_1.__assign({ url: url,
 	            data: data, adapter: function (opts) {
 	                var responseData = mockResponseData;

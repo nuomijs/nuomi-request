@@ -1,13 +1,15 @@
 declare module 'nuomi-request' {
   import { AxiosStatic, AxiosRequestConfig, AxiosPromise } from 'axios';
 
+  export type ServicesObject = {};
+
   export interface AxiosRequestOptions extends AxiosRequestConfig {
     extension?: string;
     cache?: boolean;
     delay?: number;
   }
 
-  export const createServices: (urls: object, mockData?: any) => object;
+  export const createServices: (api: ServicesObject, mockData?: any) => ServicesObject;
 
   export const createMethod: (
     name: string,
@@ -22,7 +24,7 @@ declare module 'nuomi-request' {
 
   export const createMock: (mockData: object) => void;
 
-  export const axiosConfig: (options: object) => void;
+  export const axiosConfig: (options: AxiosRequestOptions) => AxiosRequestOptions;
 
   export const axios: AxiosStatic;
 }

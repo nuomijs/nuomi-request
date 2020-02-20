@@ -1,11 +1,12 @@
 import axios, { Method, AxiosPromise } from 'axios';
 import { AxiosRequestOptions } from './types';
-import { globalWindow, isObject, formatURL } from './util';
+import { globalWindow, isObject, isObjectLike, formatURL } from './util';
 
 export { default as axios } from './axios';
 
 const methods = {};
 const mocks = {};
+const MOCK_REQUEST = '__MOCK_REQUEST__';
 
 const request = (
   method: string,
@@ -27,8 +28,8 @@ const request = (
  * @param {object} options 配置项
  * @returns {object}
  */
-export const axiosConfig = (options: AxiosRequestOptions): object => {
-  if (isObject(options)) {
+export const axiosConfig = (options: AxiosRequestOptions): AxiosRequestOptions => {
+  if (isObjectLike(options)) {
     Object.keys(options).forEach((key) => {
       axios.defaults[key] = options[key];
     });
@@ -41,7 +42,7 @@ export const axiosConfig = (options: AxiosRequestOptions): object => {
  * @param {object} mock mock数据
  */
 export const createMock = (mockData: object): void => {
-  isObject(mockData) &&
+  isObjectLike(mockData) &&
     Object.keys(mockData).forEach((key) => {
       mocks[key] = mockData[key];
     });
@@ -82,16 +83,16 @@ export const createMethod = (
 export const createServices = (api: object, mockData?: any): object => {
   const result = {};
 
-  if (isObject(api)) {
+  if (isObjectLike(api)) {
     const names = Object.keys(api);
-    const mock = isObject(mockData) ? mockData : {};
+    const mock = isObjectLike(mockData) ? mockData : {};
 
     names.forEach((name) => {
       let [method = 'GET', url] = api[name].split(/\s+/);
       const mockResponseData = mock[name] || mocks[name];
 
       if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
-        method = 'MOCK-REQUEST';
+        method = MOCK_REQUEST;
       } else {
         method = method.toUpperCase();
       }
@@ -104,7 +105,7 @@ export const createServices = (api: object, mockData?: any): object => {
 };
 
 if (process.env.NODE_ENV !== 'production') {
-  createMethod('MOCK-REQUEST', (url, data, options, mockResponseData) => {
+  createMethod(MOCK_REQUEST, (url, data, options, mockResponseData) => {
     return axios({
       url,
       data,
