@@ -3,13 +3,9 @@ const EXT_REGEXP = /\.\w+$/;
 
 export const globalWindow = typeof window !== 'undefined' ? window : global;
 
-export const isObject = (obj: any) => {
-  return {}.toString.call(obj) === `[object Object]`;
-};
+export const isObject = (obj: any) => ({}.toString.call(obj) === '[object Object]');
 
-export const isObjectLike = (obj: any) => {
-  return obj && typeof obj === 'object';
-};
+export const isObjectLike = (obj: any) => obj && typeof obj === 'object';
 
 export const isString = (obj: any): boolean => typeof obj === 'string';
 

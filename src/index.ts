@@ -1,6 +1,8 @@
 import axios, { Method, AxiosPromise } from 'axios';
 import { AxiosRequestOptions } from './types';
-import { globalWindow, isObject, isObjectLike, formatURL } from './util';
+import {
+  globalWindow, isObject, isObjectLike, formatURL,
+} from './util';
 
 export { default as axios } from './axios';
 
@@ -42,10 +44,11 @@ export const axiosConfig = (options: AxiosRequestOptions): AxiosRequestOptions =
  * @param {object} mock mock数据
  */
 export const createMock = (mockData: object): void => {
-  isObjectLike(mockData) &&
+  if (isObjectLike(mockData)) {
     Object.keys(mockData).forEach((key) => {
       mocks[key] = mockData[key];
     });
+  }
 };
 
 /**
@@ -70,6 +73,7 @@ export const createMethod = (
       `方法“${method}”已存在，替换该方法可能会影响工程的正常运行，若没有风险，请将force参数设置为true！`,
     );
   }
+  // eslint-disable-next-line no-multi-assign
   const cb = (methods[method] = callback);
   return cb;
 };
@@ -88,7 +92,9 @@ export const createServices = (api: object, mockData?: any): object => {
     const mock = isObjectLike(mockData) ? mockData : {};
 
     names.forEach((name) => {
-      let [method = 'GET', url] = api[name].split(/\s+/);
+      const array = api[name].split(/\s+/);
+      let method = array[0];
+      const url = array[2];
       const mockResponseData = mock[name] || mocks[name];
 
       if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
@@ -97,60 +103,56 @@ export const createServices = (api: object, mockData?: any): object => {
         method = method.toUpperCase();
       }
 
-      result[name] = (data?: object, options?: AxiosRequestOptions) =>
-        request(method, url, data, options, mockResponseData);
+      // eslint-disable-next-line arrow-body-style
+      result[name] = (data?: object, options?: AxiosRequestOptions) => {
+        return request(method, url, data, options, mockResponseData);
+      };
     });
   }
   return result;
 };
 
 if (process.env.NODE_ENV !== 'production') {
-  createMethod(MOCK_REQUEST, (url, data, options, mockResponseData) => {
-    return axios({
-      url,
-      data,
-      adapter: (opts: AxiosRequestOptions) => {
-        let responseData = mockResponseData;
+  createMethod(MOCK_REQUEST, (url, data, options, mockResponseData) => axios({
+    url,
+    data,
+    adapter: (opts: AxiosRequestOptions) => {
+      let responseData = mockResponseData;
 
-        if (typeof mockResponseData === 'function') {
-          responseData = mockResponseData(data, opts);
-        }
+      if (typeof mockResponseData === 'function') {
+        responseData = mockResponseData(data, opts);
+      }
 
-        return new Promise((resolve) => {
-          globalWindow.setTimeout(() => {
-            resolve({
-              data: responseData,
-              status: 200,
-              statusText: 'ok',
-              config: opts,
-              headers: opts.headers,
-            });
-          }, opts.delay || axios.defaults['delay'] || 300);
-        });
-      },
-      ...options,
-    });
-  });
+      return new Promise((resolve) => {
+        globalWindow.setTimeout(() => {
+          resolve({
+            data: responseData,
+            status: 200,
+            statusText: 'ok',
+            config: opts,
+            headers: opts.headers,
+          });
+        }, opts.delay || axios.defaults['delay'] || 300);
+      });
+    },
+    ...options,
+  }));
 }
 
 ['GET', 'DELETE', 'HEAD', 'OPTIONS'].forEach((method: Method) => {
-  createMethod(method, (url, data, options) => {
-    return axios({
-      url,
-      method,
-      ...options,
-      params: { ...data, ...options.params },
-    });
-  });
+  createMethod(method, (url, data, options) => axios({
+    url,
+    method,
+    ...options,
+    params: { ...data, ...options.params },
+  }));
 });
 
 ['POST', 'PUT', 'PATCH'].forEach((method: Method) => {
-  createMethod(method, (url, data, options) => {
-    return axios({
-      url,
-      method,
-      ...options,
-      data: isObject(data) ? { ...data, ...options.data } : data,
-    });
-  });
+  createMethod(method, (url, data, options) => axios({
+    url,
+    method,
+    ...options,
+    data: isObject(data) ? { ...data, ...options.data } : data,
+  }));
 });

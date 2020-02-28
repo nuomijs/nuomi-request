@@ -244,12 +244,8 @@
 	var PARAM_REGEXP = /(\/:\w+)/;
 	var EXT_REGEXP = /\.\w+$/;
 	exports.globalWindow = typeof window !== 'undefined' ? window : commonjsGlobal;
-	exports.isObject = function (obj) {
-	    return {}.toString.call(obj) === "[object Object]";
-	};
-	exports.isObjectLike = function (obj) {
-	    return obj && typeof obj === 'object';
-	};
+	exports.isObject = function (obj) { return ({}.toString.call(obj) === '[object Object]'); };
+	exports.isObjectLike = function (obj) { return obj && typeof obj === 'object'; };
 	exports.isString = function (obj) { return typeof obj === 'string'; };
 	/**
 	 * @function 格式化url
@@ -379,10 +375,11 @@
 	 * @param {object} mock mock数据
 	 */
 	exports.createMock = function (mockData) {
-	    util.isObjectLike(mockData) &&
+	    if (util.isObjectLike(mockData)) {
 	        Object.keys(mockData).forEach(function (key) {
 	            mocks[key] = mockData[key];
 	        });
+	    }
 	};
 	/**
 	 * @function 创建请求方法
@@ -395,6 +392,7 @@
 	    if (process.env.NODE_ENV !== 'production' && !force && !!methods[method]) {
 	        throw new Error("\u65B9\u6CD5\u201C" + method + "\u201D\u5DF2\u5B58\u5728\uFF0C\u66FF\u6362\u8BE5\u65B9\u6CD5\u53EF\u80FD\u4F1A\u5F71\u54CD\u5DE5\u7A0B\u7684\u6B63\u5E38\u8FD0\u884C\uFF0C\u82E5\u6CA1\u6709\u98CE\u9669\uFF0C\u8BF7\u5C06force\u53C2\u6570\u8BBE\u7F6E\u4E3Atrue\uFF01");
 	    }
+	    // eslint-disable-next-line no-multi-assign
 	    var cb = (methods[method] = callback);
 	    return cb;
 	};
@@ -410,7 +408,9 @@
 	        var names = Object.keys(api);
 	        var mock_1 = util.isObjectLike(mockData) ? mockData : {};
 	        names.forEach(function (name) {
-	            var _a = api[name].split(/\s+/), _b = _a[0], method = _b === void 0 ? 'GET' : _b, url = _a[1];
+	            var array = api[name].split(/\s+/);
+	            var method = array[0];
+	            var url = array[2];
 	            var mockResponseData = mock_1[name] || mocks[name];
 	            if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
 	                method = MOCK_REQUEST;
@@ -418,6 +418,7 @@
 	            else {
 	                method = method.toUpperCase();
 	            }
+	            // eslint-disable-next-line arrow-body-style
 	            result[name] = function (data, options) {
 	                return request(method, url, data, options, mockResponseData);
 	            };
@@ -426,38 +427,32 @@
 	    return result;
 	};
 	if (process.env.NODE_ENV !== 'production') {
-	    exports.createMethod(MOCK_REQUEST, function (url, data, options, mockResponseData) {
-	        return axios$1.default(tslib_1.__assign({ url: url,
-	            data: data, adapter: function (opts) {
-	                var responseData = mockResponseData;
-	                if (typeof mockResponseData === 'function') {
-	                    responseData = mockResponseData(data, opts);
-	                }
-	                return new Promise(function (resolve) {
-	                    util.globalWindow.setTimeout(function () {
-	                        resolve({
-	                            data: responseData,
-	                            status: 200,
-	                            statusText: 'ok',
-	                            config: opts,
-	                            headers: opts.headers,
-	                        });
-	                    }, opts.delay || axios$1.default.defaults['delay'] || 300);
-	                });
-	            } }, options));
-	    });
+	    exports.createMethod(MOCK_REQUEST, function (url, data, options, mockResponseData) { return axios$1.default(tslib_1.__assign({ url: url,
+	        data: data, adapter: function (opts) {
+	            var responseData = mockResponseData;
+	            if (typeof mockResponseData === 'function') {
+	                responseData = mockResponseData(data, opts);
+	            }
+	            return new Promise(function (resolve) {
+	                util.globalWindow.setTimeout(function () {
+	                    resolve({
+	                        data: responseData,
+	                        status: 200,
+	                        statusText: 'ok',
+	                        config: opts,
+	                        headers: opts.headers,
+	                    });
+	                }, opts.delay || axios$1.default.defaults['delay'] || 300);
+	            });
+	        } }, options)); });
 	}
 	['GET', 'DELETE', 'HEAD', 'OPTIONS'].forEach(function (method) {
-	    exports.createMethod(method, function (url, data, options) {
-	        return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
-	            method: method }, options), { params: tslib_1.__assign(tslib_1.__assign({}, data), options.params) }));
-	    });
+	    exports.createMethod(method, function (url, data, options) { return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
+	        method: method }, options), { params: tslib_1.__assign(tslib_1.__assign({}, data), options.params) })); });
 	});
 	['POST', 'PUT', 'PATCH'].forEach(function (method) {
-	    exports.createMethod(method, function (url, data, options) {
-	        return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
-	            method: method }, options), { data: util.isObject(data) ? tslib_1.__assign(tslib_1.__assign({}, data), options.data) : data }));
-	    });
+	    exports.createMethod(method, function (url, data, options) { return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
+	        method: method }, options), { data: util.isObject(data) ? tslib_1.__assign(tslib_1.__assign({}, data), options.data) : data })); });
 	});
 
 	});

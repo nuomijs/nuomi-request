@@ -9,7 +9,7 @@
 
 [快速入门](https://github.com/nuomijs/nuomi-request/wiki)
 
-## 版权
+## 许可证
 
 MIT
 
