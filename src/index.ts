@@ -92,15 +92,18 @@ export const createServices = (api: object, mockData?: any): object => {
     const mock = isObjectLike(mockData) ? mockData : {};
 
     names.forEach((name) => {
-      const array = api[name].split(/\s+/);
-      let method = array[0];
-      const url = array[2];
+      const array = api[name].trim().split(/\s+/);
+      let method = array[0].toUpperCase();
+
+      if (!methods[method]) {
+        throw new Error(`方法: ${method} 不存在`);
+      }
+
       const mockResponseData = mock[name] || mocks[name];
+      const url = array[1] || '';
 
       if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
         method = MOCK_REQUEST;
-      } else {
-        method = method.toUpperCase();
       }
 
       // eslint-disable-next-line arrow-body-style

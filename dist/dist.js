@@ -408,15 +408,15 @@
 	        var names = Object.keys(api);
 	        var mock_1 = util.isObjectLike(mockData) ? mockData : {};
 	        names.forEach(function (name) {
-	            var array = api[name].split(/\s+/);
-	            var method = array[0];
-	            var url = array[2];
+	            var array = api[name].trim().split(/\s+/);
+	            var method = array[0].toUpperCase();
+	            if (!methods[method]) {
+	                throw new Error("\u65B9\u6CD5: " + method + " \u4E0D\u5B58\u5728");
+	            }
 	            var mockResponseData = mock_1[name] || mocks[name];
+	            var url = array[1] || '';
 	            if (process.env.NODE_ENV !== 'production' && !!mockResponseData) {
 	                method = MOCK_REQUEST;
-	            }
-	            else {
-	                method = method.toUpperCase();
 	            }
 	            // eslint-disable-next-line arrow-body-style
 	            result[name] = function (data, options) {
