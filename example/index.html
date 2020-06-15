@@ -18,14 +18,14 @@
   </script>
   <script src="../dist/dist.min.js"></script>
   <script>
-    NuomiRequest.axiosConfig({
+    Request.axiosConfig({
       extension: '.do',
       cache: false,
       delay: 2000,
       baseURL: 'https://www.fastmock.site/mock/f4cfe9645413ed92b9e90cb83eff4ec6/',
     });
 
-    NuomiRequest.createMock({
+    Request.createMock({
       getData: (data, opts) => {
         if(data.username === 'xxx'){
           return Mock.mock({
@@ -45,7 +45,7 @@
       }
     });
 
-    var services = NuomiRequest.createServices({
+    var services = Request.createServices({
       getData: 'POST /getjson/:username',
     });
 

@@ -40,7 +40,7 @@
     "build": "npm run build:lib && npm run build:dist",
     "build:lib": "npm run clean:lib && npm run build:cjs",
     "build:dist": "npm run clean:dist && npm run build:umd && npm run build:min",
-    "build:cjs": "cross-env BABEL_ENV=cjs babel src/*.ts --out-dir lib --extensions .ts --ignore src/types.ts",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel src/*.ts --out-dir lib --extensions .ts",
     "build:umd": "cross-env BABEL_ENV=umd rollup --config",
     "build:min": "cross-env BABEL_ENV=umd NODE_ENV=production rollup --config",
     "clean:lib": "rimraf lib",
@@ -51,7 +51,7 @@
   },
   "name": "nuomi-request",
   "description": "nuomi-request是基于axios封装的请求库，可以对接口进行集中式管理，方便接口的使用和维护，配合mock功能在开发阶段便于程序的测试。",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "main": "lib/index.js",
   "typings": "global.d.ts",
   "repository": {

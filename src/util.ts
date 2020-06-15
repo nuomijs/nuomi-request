@@ -20,11 +20,12 @@ export const formatURL = (url: string, data: object): string => {
 
   // 匹配动态参数
   if (PARAM_REGEXP.test(url)) {
-    const params = isObject(data) ? data : {};
     url.split(PARAM_REGEXP).forEach((path) => {
       if (path.startsWith('/:')) {
         const key = path.substr(2);
-        newUrl += params[key] !== undefined ? `/${params[key]}` : '/';
+        newUrl += data[key] !== undefined ? `/${data[key]}` : '/';
+        // eslint-disable-next-line no-param-reassign
+        delete data[key];
       } else {
         newUrl += path;
       }

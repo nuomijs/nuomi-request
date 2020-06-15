@@ -1,5 +1,5 @@
 import axios, { Method, AxiosPromise } from 'axios';
-import { AxiosRequestOptions } from './types';
+import { AxiosRequestOptions } from './axios';
 import {
   globalWindow, isObject, isObjectLike, formatURL,
 } from './util';
@@ -17,12 +17,13 @@ const request = (
   options?: AxiosRequestOptions,
   ...rest: any[]
 ) => {
-  const newUrl: string = formatURL(url, data);
+  const newData = { ...data };
+  const newUrl: string = formatURL(url, newData);
   const req = methods[method];
   if (!req) {
     throw new Error(`不存在请求方法“${method}”`);
   }
-  return req(newUrl, data, options, ...rest);
+  return req(newUrl, newData, options, ...rest);
 };
 
 /**
@@ -143,7 +144,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ['GET', 'DELETE', 'HEAD', 'OPTIONS'].forEach((method: Method) => {
-  createMethod(method, (url, data, options) => axios({
+  createMethod(method, (url, data, options = {}) => axios({
     url,
     method,
     ...options,
@@ -152,7 +153,7 @@ if (process.env.NODE_ENV !== 'production') {
 });
 
 ['POST', 'PUT', 'PATCH'].forEach((method: Method) => {
-  createMethod(method, (url, data, options) => axios({
+  createMethod(method, (url, data, options = {}) => axios({
     url,
     method,
     ...options,

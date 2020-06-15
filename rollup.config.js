@@ -12,7 +12,7 @@ const config = {
   output: {
     file: `dist/dist${PROD ? '.min' : ''}.js`,
     format: 'umd',
-    name: 'NuomiRequest',
+    name: 'Request',
     sourcemap: true,
     globals: {
       axios: 'axios',

@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('axios')) :
 	typeof define === 'function' && define.amd ? define(['exports', 'axios'], factory) :
-	(global = global || self, factory(global.NuomiRequest = {}, global.axios));
+	(global = global || self, factory(global.Request = {}, global.axios));
 }(this, (function (exports, axios$1) { 'use strict';
 
 	axios$1 = axios$1 && axios$1.hasOwnProperty('default') ? axios$1['default'] : axios$1;
@@ -257,11 +257,12 @@
 	    var newUrl = '';
 	    // 匹配动态参数
 	    if (PARAM_REGEXP.test(url)) {
-	        var params_1 = exports.isObject(data) ? data : {};
 	        url.split(PARAM_REGEXP).forEach(function (path) {
 	            if (path.startsWith('/:')) {
 	                var key = path.substr(2);
-	                newUrl += params_1[key] !== undefined ? "/" + params_1[key] : '/';
+	                newUrl += data[key] !== undefined ? "/" + data[key] : '/';
+	                // eslint-disable-next-line no-param-reassign
+	                delete data[key];
 	            }
 	            else {
 	                newUrl += path;
@@ -350,12 +351,13 @@
 	    for (var _i = 4; _i < arguments.length; _i++) {
 	        rest[_i - 4] = arguments[_i];
 	    }
-	    var newUrl = util.formatURL(url, data);
+	    var newData = tslib_1.__assign({}, data);
+	    var newUrl = util.formatURL(url, newData);
 	    var req = methods[method];
 	    if (!req) {
 	        throw new Error("\u4E0D\u5B58\u5728\u8BF7\u6C42\u65B9\u6CD5\u201C" + method + "\u201D");
 	    }
-	    return req.apply(void 0, tslib_1.__spreadArrays([newUrl, data, options], rest));
+	    return req.apply(void 0, tslib_1.__spreadArrays([newUrl, newData, options], rest));
 	};
 	/**
 	 * @function 为axios配置默认值
@@ -447,12 +449,18 @@
 	        } }, options)); });
 	}
 	['GET', 'DELETE', 'HEAD', 'OPTIONS'].forEach(function (method) {
-	    exports.createMethod(method, function (url, data, options) { return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
-	        method: method }, options), { params: tslib_1.__assign(tslib_1.__assign({}, data), options.params) })); });
+	    exports.createMethod(method, function (url, data, options) {
+	        if (options === void 0) { options = {}; }
+	        return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
+	            method: method }, options), { params: tslib_1.__assign(tslib_1.__assign({}, data), options.params) }));
+	    });
 	});
 	['POST', 'PUT', 'PATCH'].forEach(function (method) {
-	    exports.createMethod(method, function (url, data, options) { return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
-	        method: method }, options), { data: util.isObject(data) ? tslib_1.__assign(tslib_1.__assign({}, data), options.data) : data })); });
+	    exports.createMethod(method, function (url, data, options) {
+	        if (options === void 0) { options = {}; }
+	        return axios$1.default(tslib_1.__assign(tslib_1.__assign({ url: url,
+	            method: method }, options), { data: util.isObject(data) ? tslib_1.__assign(tslib_1.__assign({}, data), options.data) : data }));
+	    });
 	});
 
 	});
